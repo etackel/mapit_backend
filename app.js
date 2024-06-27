@@ -1,63 +1,21 @@
-// const express = require("express");
-// const app = express();
-
-// const connectDB = require('./db/connect.js')
-// const tasks = require("./routes/tasks.js");
-// require("dotenv").config()
-
-// //middleware
-// app.use(express.static('./public'));
-// app.use(express.json());
-
-// //routes
-
-// const authRoutes = require('./routes/oauthRoutes.js');
-// const taskRoutes = require('./routes/tasks.js');
-
-// app.use('/oauth', authRoutes);
-// app.use('/tasks', taskRoutes);
-
-
-// const port = 5000;
-// const start  = async () => {
-//     try {
-//         await connectDB(process.env.MONGO_URI);
-//         app.listen(port, console.log(`Server is listening on port ${port}`));
-//     }
-//     catch (err) {
-//         console.log(err);
-//     }
-// }
-
-// start();
-
-
-
-
 const express = require('express');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+const userRoutes = require('./routes/userRoutes');
+const noteRoutes = require('./routes/noteRoutes');
+
+dotenv.config();
+
 const app = express();
-const connectDB = require('./db/connect.js');
+app.use(bodyParser.json());
 
-// Middleware
-app.use(express.static('./public'));
-app.use(express.json());
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
-// Routes
-const authRoutes = require('./routes/authRoutes.js');
-const taskRoutes = require('./routes/tasks.js');
+app.use('/api/users', userRoutes);
+app.use('/api/notes', noteRoutes);
 
-app.use('/auth', authRoutes);
-app.use('/tasks', taskRoutes);
-
-const port = process.env.PORT || 5000;
-
-const start = async () => {
-  try {
-    await connectDB(process.env.MONGO_URI);
-    app.listen(port, console.log(`Server is listening on port ${port}`));
-  } catch (err) {
-    console.error('Server startup error:', err);
-  }
-};
-
-start();
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
