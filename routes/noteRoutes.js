@@ -29,7 +29,7 @@ router.post('/', authenticateJWT, async (req, res) => {
 // Get all notes
 router.get('/', authenticateJWT, async (req, res) => {
   try {
-    const notes = await Note.find({ userId: req.user.email });
+    const notes = await Note.find({ noteId: "unique_note_id" });
     res.json(notes);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -79,3 +79,4 @@ router.delete('/:id', authenticateJWT, async (req, res) => {
 });
 
 module.exports = router;
+  
